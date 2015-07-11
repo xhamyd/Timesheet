@@ -39,6 +39,9 @@ class Timesheet(object):
             return string_to_time(timeHeader[1]) - string_to_time(timeHeader[0])
         else: 
             return False #there is no timeIncrement
+            
+    def disp(self):
+        #use some Tkinter shii
 
 class Time(object):
     def __init__(self, hours, mins, period):
@@ -73,6 +76,8 @@ class Time(object):
             periodX = "AM"
         return Time(hoursX, minsX, periodX)
         
+"""
+BELONGS IN A DIFFERENT FILE:
 class Conflict(object):
     def __init__(self, timesheet, startTime, endTime):
         self.timesheet = timesheet
@@ -80,7 +85,8 @@ class Conflict(object):
         self.endTime = endTime
         
         self.duration = endTime - startTime
-    
+"""
+
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
     timeHeader, L = [], [[]]
@@ -94,3 +100,5 @@ def timesheet_from_csv():
         timeHeader.append(columns[0])
         columns.pop(0) #remove the time header
         L[i-1] = columns
+    
+    return Timesheet(L, dayHeader, timeHeader)
