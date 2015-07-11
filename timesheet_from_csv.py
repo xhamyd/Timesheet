@@ -5,6 +5,13 @@
 import string
 import csv
 
+def string_to_time(timeString):
+    timeString_list = timeString.split()
+    hoursmins_list = timeString_list[0].split(":")
+    hours, mins = int(hoursmins_list[0]), int(hoursmins_list[1])
+    period = timeString_list[1].upper()
+    return Time(hours, mins, period)
+    
 class Timesheet(object):
     def __init__(self, L, dayHeader, timeHeader):
         self.L = L
@@ -28,8 +35,10 @@ class Timesheet(object):
         return self.L[dayIndex][timeIndex] = ""
         
     def calcTimeIncr(self, timeHeader):
-        if len(timeHeader) > 1: return subTime(timeHeader[1], timeHeader[0])
-        else: return False #there is no timeIncrement
+        if len(timeHeader) > 1: 
+            return string_to_time(timeHeader[1]) - string_to_time(timeHeader[0])
+        else: 
+            return False #there is no timeIncrement
 
 class Time(object):
     def __init__(self, hours, mins, period):
@@ -65,7 +74,12 @@ class Time(object):
         return Time(hoursX, minsX, periodX)
         
 class Conflict(object):
-    def __init__(self, timesheet, startTime, endTime)
+    def __init__(self, timesheet, startTime, endTime):
+        self.timesheet = timesheet
+        self.startTime = startTime
+        self.endTime = endTime
+        
+        self.duration = endTime - startTime
     
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
