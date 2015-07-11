@@ -24,3 +24,15 @@ class Timesheet(object):
     def markFree(self, day, time):
         (dayIndex, timeIndex) = getIndices(self, day, time)
         return self.L[dayIndex][timeIndex] = ""
+        
+def timesheet_from_csv():
+    timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
+    for i, line in enumerate(timesheet_file):
+        columns = line.strip().split(',')
+        if i == 0: #header line
+            columns.pop(0) #remove the blank day header
+            dayHeader = columns
+            continue
+        
+        
+            
