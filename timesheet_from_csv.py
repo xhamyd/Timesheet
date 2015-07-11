@@ -27,6 +27,7 @@ class Timesheet(object):
         
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
+    timeHeader, L = [], [[]]
     for i, line in enumerate(timesheet_file):
         columns = line.strip().split(',')
         if i == 0: #header line
@@ -34,5 +35,6 @@ def timesheet_from_csv():
             dayHeader = columns
             continue
         
-        
-            
+        timeHeader.append(columns[0])
+        columns.pop(0) #remove the time header
+        L[i-1] = columns
