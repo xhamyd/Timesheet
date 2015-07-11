@@ -43,11 +43,26 @@ class Time(object):
     def __sub__(self, other):
         hours1 = self.hours + 12 if (self.period == "PM") else self.hours
         hours1 = 0 if (self.period == "AM" and self.hours == 12) else hours1
+        mins1 = self.mins
         
         hours2 = other.hours + 12 if (other.period == "PM") else other.hours
         hours2 = 0 if (other.period == "AM" and other.hours == 12) else hours2
+        mins2 = other.mins
         
+        if self.mins < other.mins:
+            hours1 = hours1 - 1 if (hours1 != 0) else hours + 24 - 1
+            mins1 += 60
         
+        hoursX, minsX = hours1 - hours2, mins1 - mins2
+        if hoursX > 12:
+            hoursX -= 12
+            periodX = "PM"
+        elif hoursX == 0:
+            hoursX += 12
+            periodX = "AM"
+        else:
+            periodX = "AM"
+        return Time(hoursX, minsX, periodX)
         
 class Conflict(object):
     def __init__(self, timesheet, startTime, endTime)
