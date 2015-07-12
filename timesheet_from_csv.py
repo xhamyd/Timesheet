@@ -76,17 +76,6 @@ class Time(object):
             periodX = "AM"
         return Time(hoursX, minsX, periodX)
         
-"""
-BELONGS IN A DIFFERENT FILE:
-class Conflict(object):
-    def __init__(self, timesheet, startTime, endTime):
-        self.timesheet = timesheet
-        self.startTime = startTime
-        self.endTime = endTime
-        
-        self.duration = endTime - startTime
-"""
-
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
     timeHeader, L = [], [[]]
