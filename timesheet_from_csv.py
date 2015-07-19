@@ -42,6 +42,7 @@ class Timesheet(object):
             
     def disp(self):
         #use some Tkinter shii
+        pass
 
 class Time(object):
     def __init__(self, hours, mins, period):
