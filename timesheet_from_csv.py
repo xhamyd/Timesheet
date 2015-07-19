@@ -31,8 +31,12 @@ class Timesheet(object):
         self.startingTime, self.endingTime = calcEndpointTimes(timeHeader)
 
     def getIndices(self, day, time):
-        return (self.dayHeader.index(day), self.timeHeader.index(time))
-        
+        if (day in dayHeader and time in timeHeader):
+            return (self.dayHeader.index(day), self.timeHeader.index(time))
+        else:
+            print "The requested day or time does not exist in the headers"
+            return False
+            
     def checkAvail(self, day, time):
         (dayIndex, timeIndex) = getIndices(self, day, time)
         return self.L[dayIndex][timeIndex] == "x"
