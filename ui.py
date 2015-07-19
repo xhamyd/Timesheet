@@ -8,7 +8,9 @@ def incorrectTypes(T, day, startTime, endTime):
             type(endTime) != Time)
 
 def missingFromHeaders(T, day, startTime, endTime):
-    #balls
+    return (day not in T.dayHeader or
+            startTime > T.endingTime or
+            endTime < T.startingTime) 
     
 def REQUIRES_CHECK(T, day, startTime, endTime):
     return (not incorrectTypes(T, day, startTime, endTime) and
@@ -18,16 +20,16 @@ def calcNumSlots(T, startTime, endTime):
     sT = maxTime(startTime, T.startingTime)
     eT = minTime(endTime, T.endingTime)
     duration = eT - sT
-    return int(math.ceil(duration / T.timeIncrement))
+    return int(math.ceil(duration / T.timeIncrement)), sT, eT
     
 def add(T, day, startTime, endTime): #add a time when busy (conflict)
     if not REQUIRES_CHECK(T, day, startTime, endTime):
         #bad types, do not execute function
         print "Could not add timeslot as requested, please check the types of the files passed in"
         
-    numSlots = calcNumSlots(T, startTime, endTime)
+    numSlots, sT, eT = calcNumSlots(T, startTime, endTime)
     for i in xrange(numSlots): 
         T.markBusy(day, startTime + i * T.timeIncrement)
     
-    
+    print "Added conflict for %s from %r to %r" % (day, sT, eT)
     
