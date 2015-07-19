@@ -14,6 +14,9 @@ def string_to_time(timeString):
 
 def calcEndpointTimes(timeHeader):
     return string_to_time(timeHeader[0]), string_to_time(timeHeader[-1])
+
+def minTime(time1, time2):
+    return time1 if time1 < time2 else time2
     
 class Timesheet(object):
     def __init__(self, L, dayHeader, timeHeader):
@@ -97,9 +100,6 @@ class Time(object):
         
         return hours, mins
 
-    def minTime(self, other):
-        return self if self < other else other
-        
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
     timeHeader, L = [], [[]]
