@@ -61,15 +61,10 @@ class Time(object):
         return "%02d:%02d %s" % (self.hours, self.mins, self.period)
         
     def __sub__(self, other):
-        hours1 = self.hours + 12 if (self.period == "PM") else self.hours
-        hours1 = 0 if (self.period == "AM" and self.hours == 12) else hours1
-        mins1 = self.mins
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
         
-        hours2 = other.hours + 12 if (other.period == "PM") else other.hours
-        hours2 = 0 if (other.period == "AM" and other.hours == 12) else hours2
-        mins2 = other.mins
-        
-        if self.mins < other.mins:
+        if mins1 < mins2:
             hours1 = hours1 - 1 if (hours1 != 0) else hours + 24 - 1
             mins1 += 60
         
@@ -83,6 +78,27 @@ class Time(object):
         else:
             periodX = "AM"
         return Time(hoursX, minsX, periodX)
+        
+    def __lt__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
+        
+        if hours1 < hours2: 
+            return self
+        elif hours2 < hours1: 
+            return other
+        else: #hours1 == hours2
+            return self if mins1 < mins2 else other 
+
+    def convert_to_24hr(self): 
+        hours = self.hours + 12 if (self.period == "PM") else self.hours
+        hours = 0 if (self.period == "AM" and self.hours == 12) else hours
+        mins = self.mins
+        
+        return hours, mins
+
+    def minTime(self, other):
+        return self if self < other else other
         
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
