@@ -11,6 +11,9 @@ def string_to_time(timeString):
     hours, mins = int(hoursmins_list[0]), int(hoursmins_list[1])
     period = timeString_list[1].upper()
     return Time(hours, mins, period)
+
+def calcEndpointTimes(timeHeader):
+    return string_to_time(timeHeader[0]), string_to_time(timeHeader[-1])
     
 class Timesheet(object):
     def __init__(self, L, dayHeader, timeHeader):
@@ -18,6 +21,7 @@ class Timesheet(object):
         self.dayHeader = dayHeader
         self.timeHeader = timeHeader
         self.timeIncrement = self.calcTimeIncr(timeHeader)
+        self.startingTime, self.endingTime = calcEndpointTimes(timeHeader)
 
     def getIndices(self, day, time):
         return (self.dayHeader.index(day), self.timeHeader.index(time))
@@ -40,6 +44,9 @@ class Timesheet(object):
         else: 
             return False #there is no timeIncrement
             
+    def calcEndpointTimes(timeHeader):
+        return string_to_time(timeHeader[0]), string_to_time(timeHeader[-1])
+        
     def disp(self):
         #use some Tkinter shii
         pass
