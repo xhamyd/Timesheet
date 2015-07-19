@@ -18,6 +18,10 @@ def calcEndpointTimes(timeHeader):
 def minTime(time1, time2):
     return time1 if time1 < time2 else time2
     
+def maxTime(time1, time2):
+    return time1 if time1 > time2 else time2
+
+
 class Timesheet(object):
     def __init__(self, L, dayHeader, timeHeader):
         self.L = L
@@ -92,6 +96,17 @@ class Time(object):
             return other
         else: #hours1 == hours2
             return self if mins1 < mins2 else other 
+
+    def __gt__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
+        
+        if hours1 > hours2: 
+            return self
+        elif hours2 > hours1: 
+            return other
+        else: #hours1 == hours2
+            return self if mins1 > mins2 else other 
 
     def convert_to_24hr(self): 
         hours = self.hours + 12 if (self.period == "PM") else self.hours
