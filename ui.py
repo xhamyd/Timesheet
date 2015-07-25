@@ -33,3 +33,6 @@ def add(T, day, startTime, endTime): #add a time when busy (conflict)
     
     print "Added conflict for %s from %r to %r" % (day, sT, eT)
     
+def freeTimes(T):
+    
+    
