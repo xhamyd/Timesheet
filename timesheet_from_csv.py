@@ -60,7 +60,7 @@ class Timesheet(object):
     def calcEndpointTimes(self):
         return string_to_time(self.timeHeader[0]), string_to_time(self.timeHeader[-1])
         
-    def disp(self, freeTimesOnly=False):
+    def disp(self):
         winWidth, winHeight = 300, 200
         cellWidth, cellHeight = 50, 25
         topMargin = 35
@@ -72,12 +72,18 @@ class Timesheet(object):
         canvas.create_rectangle(0, 0, winWidth, topMargin, text=self.name)
         for row in xrange(len(self.timeHeader)):
             for col in xrange(len(self.dayHeader)):
-                if row == 0: cellText = self.dayHeader[col]
-                elif col == 0: cellText = self.timeHeader[row]
-                else: cellText = self.L[row][col]
+                if row == 0: 
+                    cellFill = ""
+                    cellText = self.dayHeader[col]
+                elif col == 0: 
+                    cellFill = ""
+                    cellText = self.timeHeader[row]
+                else: 
+                    cellText = self.L[row][col]
+                    cellFill = "" if len(cellText) == 0 else "green"
                 canvas.create_rectangle(row * cellHeight + topMargin, col * cellWidth,
                                         (row + 1) * cellHeight + topMargin, (col + 1) * cellWidth,
-                                        text=cellText)
+                                        text=cellText, fill=cellFill)
             
         root.mainloop()
 
