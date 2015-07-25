@@ -4,6 +4,7 @@
 
 import string
 import csv
+from Tkinter import *
 
 def string_to_time(timeString):
     timeString_list = timeString.split()
@@ -23,7 +24,8 @@ def maxTime(time1, time2):
 
 
 class Timesheet(object):
-    def __init__(self, L, dayHeader, timeHeader):
+    def __init__(self, name, L, dayHeader, timeHeader):
+        self.name = name
         self.L = L
         self.dayHeader = dayHeader
         self.timeHeader = timeHeader
@@ -55,12 +57,29 @@ class Timesheet(object):
         else: 
             return False #there is no timeIncrement
             
-    def calcEndpointTimes(timeHeader):
-        return string_to_time(timeHeader[0]), string_to_time(timeHeader[-1])
+    def calcEndpointTimes(self):
+        return string_to_time(self.timeHeader[0]), string_to_time(self.timeHeader[-1])
         
-    def disp(self):
-        #use some Tkinter shii
-        pass
+    def disp(self, freeTimesOnly=False):
+        winWidth, winHeight = 300, 200
+        cellWidth, cellHeight = 50, 25
+        topMargin = 35
+        
+        root = Tk()
+        canvas = Canvas(root, winWidth, winHeight)
+        canvas.pack()
+
+        canvas.create_rectangle(0, 0, winWidth, topMargin, text=self.name)
+        for row in xrange(len(self.timeHeader)):
+            for col in xrange(len(self.dayHeader)):
+                if row == 0: cellText = self.dayHeader[col]
+                elif col == 0: cellText = self.timeHeader[row]
+                else: cellText = self.L[row][col]
+                canvas.create_rectangle(row * cellHeight + topMargin, col * cellWidth,
+                                        (row + 1) * cellHeight + topMargin, (col + 1) * cellWidth,
+                                        text=cellText)
+            
+        root.mainloop()
 
 class Time(object):
     def __init__(self, hours, mins, period):
@@ -121,16 +140,15 @@ class Time(object):
 
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
-    timeHeader, L = [], [[]]
+    timeHeader, L = [""], [[]]
     for i, line in enumerate(timesheet_file):
         columns = line.strip().split(',')
-        if i == 0: #header line
-            columns.pop(0) #remove the blank day header
+        if i == 0: 
             dayHeader = columns
             continue
         
-        timeHeader.append(columns[0])
-        columns.pop(0) #remove the time header
-        L[i-1] = columns
+        timeHead = columns.pop(0) #remove the time header
+        timeHeader.append(timeHead)
+        L[i - 1] = columns
     
-    return Timesheet(L, dayHeader, timeHeader)
+    return Timesheet(TIMESHEET_FROM_CSV_FILE.strip(".csv"), L, dayHeader, timeHeader)
