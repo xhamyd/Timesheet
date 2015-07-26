@@ -2,10 +2,11 @@
     A timesheet is represented by a 2D list, with 2 1D list for the headers
 """
 
+TIMESHEET_FROM_CSV_FILE = ""
+
 import string
 import csv
-from Classes import *
-from Tkinter import *
+from Classes import Timesheet
 
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
