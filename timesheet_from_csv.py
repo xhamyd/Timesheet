@@ -4,81 +4,8 @@
 
 import string
 import csv
+from Classes import *
 from Tkinter import *
-
-def string_to_time(timeString):
-    timeString_list = timeString.split()
-    hoursmins_list = timeString_list[0].split(":")
-    hours, mins = int(hoursmins_list[0]), int(hoursmins_list[1])
-    period = timeString_list[1].upper()
-    return Time(hours, mins, period)
-
-def calcEndpointTimes(timeHeader):
-    return string_to_time(timeHeader[0]), string_to_time(timeHeader[-1])
-
-def minTime(time1, time2):
-    return time1 if time1 < time2 else time2
-    
-def maxTime(time1, time2):
-    return time1 if time1 > time2 else time2
-
-
-class Time(object):
-    def __init__(self, hours, mins, period):
-        self.hours = hours
-        self.mins = mins
-        self.period = period.upper()
-        
-    def __repr__(self):
-        return "%02d:%02d %s" % (self.hours, self.mins, self.period)
-        
-    def __sub__(self, other):
-        hours1, mins1 = self.convert_to_24hr()
-        hours2, mins2 = other.convert_to_24hr()
-        
-        if mins1 < mins2:
-            hours1 = hours1 - 1 if (hours1 != 0) else hours + 24 - 1
-            mins1 += 60
-        
-        hoursX, minsX = hours1 - hours2, mins1 - mins2
-        if hoursX > 12:
-            hoursX -= 12
-            periodX = "PM"
-        elif hoursX == 0:
-            hoursX += 12
-            periodX = "AM"
-        else:
-            periodX = "AM"
-        return Time(hoursX, minsX, periodX)
-        
-    def __lt__(self, other):
-        hours1, mins1 = self.convert_to_24hr()
-        hours2, mins2 = other.convert_to_24hr()
-        
-        if hours1 < hours2: 
-            return self
-        elif hours2 < hours1: 
-            return other
-        else: #hours1 == hours2
-            return self if mins1 < mins2 else other 
-
-    def __gt__(self, other):
-        hours1, mins1 = self.convert_to_24hr()
-        hours2, mins2 = other.convert_to_24hr()
-        
-        if hours1 > hours2: 
-            return self
-        elif hours2 > hours1: 
-            return other
-        else: #hours1 == hours2
-            return self if mins1 > mins2 else other 
-
-    def convert_to_24hr(self): 
-        hours = self.hours + 12 if (self.period == "PM") else self.hours
-        hours = 0 if (self.period == "AM" and self.hours == 12) else hours
-        mins = self.mins
-        
-        return hours, mins
 
 def timesheet_from_csv():
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
