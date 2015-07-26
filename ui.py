@@ -17,8 +17,8 @@ def REQUIRES_CHECK(T, day, startTime, endTime):
             not missingFromHeaders(T, day, startTime, endTime))
             
 def calcNumSlots(T, startTime, endTime):
-    sT = maxTime(startTime, T.startingTime)
-    eT = minTime(endTime, T.endingTime)
+    sT = startTime if startTime > T.startingTime else T.startingTime
+    eT = endTime if endTime < T.endingTime else T.endingTime
     duration = eT - sT
     return int(math.ceil(duration / T.timeIncrement)), sT, eT
     
