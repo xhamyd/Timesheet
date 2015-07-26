@@ -1,3 +1,10 @@
+def string_to_time(timeString):
+    timeString_list = timeString.split()
+    hoursmins_list = timeString_list[0].split(":")
+    hours, mins = int(hoursmins_list[0]), int(hoursmins_list[1])
+    period = timeString_list[1].upper()
+    return Time(hours, mins, period)
+
 class Timesheet(object):
     def __init__(self, name, L, dayHeader, timeHeader):
         self.name = name
@@ -26,9 +33,9 @@ class Timesheet(object):
         (dayIndex, timeIndex) = getIndices(self, day, time)
         return self.L[dayIndex][timeIndex] = ""
         
-    def calcTimeIncr(self, timeHeader):
-        if len(timeHeader) > 1: 
-            return string_to_time(timeHeader[1]) - string_to_time(timeHeader[0])
+    def calcTimeIncr(self):
+        if len(self.timeHeader) > 1: 
+            return string_to_time(self.timeHeader[1]) - string_to_time(self.timeHeader[0])
         else: 
             return False #there is no timeIncrement
             
