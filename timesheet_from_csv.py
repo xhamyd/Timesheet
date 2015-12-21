@@ -2,13 +2,11 @@
     A timesheet is represented by a 2D list, with 2 1D list for the headers
 """
 
-TIMESHEET_FROM_CSV_FILE = ""
-
 import string
 import csv
 from Classes import Timesheet
 
-def timesheet_from_csv():
+def timesheet_from_csv(TIMESHEET_FROM_CSV_FILE):
     timesheet_file = open(TIMESHEET_FROM_CSV_FILE), 'rU')
     timeHeader, L = [""], [[]]
     for i, line in enumerate(timesheet_file):
