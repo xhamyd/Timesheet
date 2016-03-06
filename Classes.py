@@ -1,3 +1,5 @@
+from Tkinter import *
+
 def string_to_time(timeString):
     timeString_list = timeString.split()
     hoursmins_list = timeString_list[0].split(":")
@@ -11,8 +13,8 @@ class Timesheet(object):
         self.L = L
         self.dayHeader = dayHeader
         self.timeHeader = timeHeader
-        self.timeIncrement = self.calcTimeIncr(timeHeader)
-        self.startingTime, self.endingTime = calcEndpointTimes(timeHeader)
+        self.timeIncrement = self.calcTimeIncr()
+        self.startingTime, self.endingTime = self.calcEndpointTimes()
 
     def getIndices(self, day, time):
         if (day in dayHeader and time in timeHeader):
@@ -23,15 +25,15 @@ class Timesheet(object):
             
     def checkAvail(self, day, time):
         (dayIndex, timeIndex) = getIndices(self, day, time)
-        return self.L[dayIndex][timeIndex] == "x"
+        return self.L[dayIndex][timeIndex] != "x"
 
     def markBusy(self, day, time):
         (dayIndex, timeIndex) = getIndices(self, day, time)
-        return self.L[dayIndex][timeIndex] = "x"
+        self.L[dayIndex][timeIndex] = "x"
 
     def markFree(self, day, time):
         (dayIndex, timeIndex) = getIndices(self, day, time)
-        return self.L[dayIndex][timeIndex] = ""
+        self.L[dayIndex][timeIndex] = ""
         
     def calcTimeIncr(self):
         if len(self.timeHeader) > 1: 
