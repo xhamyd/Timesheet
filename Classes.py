@@ -45,29 +45,47 @@ class Timesheet(object):
         return string_to_time(self.timeHeader[0]), string_to_time(self.timeHeader[-1])
         
     def disp(self):
-        winWidth, winHeight = 300, 200
-        cellWidth, cellHeight = 50, 25
+        # x is width, y is height
+        cellWidth = 100
+        cellHeight = 25
         topMargin = 35
+        winWidth = cellWidth * (len(self.dayHeader) + 1)
+        winHeight = cellHeight * (len(self.timeHeader) + 1) + topMargin
         
         root = Tk()
-        canvas = Canvas(root, winWidth, winHeight)
+        canvas = Canvas(root, width=winWidth, height=winHeight)
         canvas.pack()
 
-        canvas.create_rectangle(0, 0, winWidth, topMargin, text=self.name)
-        for row in xrange(len(self.timeHeader)):
-            for col in xrange(len(self.dayHeader)):
-                if row == 0: 
+        canvas.create_rectangle(0, 0, winWidth, topMargin)
+        canvas.create_text(winWidth/2, topMargin/2, text=self.name)
+
+        tH, dH, L = [""], [""], [[]]
+        for t in self.timeHeader: tH.append(t)
+        for d in self.dayHeader: dH.append(d)
+        for row in self.L: 
+            Lrow = [""]
+            for item in row: Lrow.append(item)
+            L.append(Lrow)
+
+        for row in xrange(len(tH)):
+            for col in xrange(len(dH)):
+                if (row == 0) and (col == 0):
+                    continue
+                elif row == 0: 
                     cellFill = ""
-                    cellText = self.dayHeader[col]
+                    cellText = dH[col]
                 elif col == 0: 
                     cellFill = ""
-                    cellText = self.timeHeader[row]
-                else: 
-                    cellText = self.L[row][col]
-                    cellFill = "" if len(cellText) == 0 else "green"
-                canvas.create_rectangle(row * cellHeight + topMargin, col * cellWidth,
-                                        (row + 1) * cellHeight + topMargin, (col + 1) * cellWidth,
-                                        text=cellText, fill=cellFill)
+                    cellText = tH[row]
+                else:
+                    cellFill = "green" if L[row][col] == "x" else ""
+                    cellText = L[row][col]
+                x0 = col * cellWidth
+                y0 = row * cellHeight + topMargin
+                x1 = x0 + cellWidth
+                y1 = y0 + cellHeight
+                canvas.create_rectangle(x0, y0, x1, y1, fill=cellFill)
+                canvas.create_text((x0 + x1)/2, (y0 + y1)/2, text=cellText) 
             
         root.mainloop()
 
