@@ -7,6 +7,30 @@ def string_to_time(timeString):
     period = timeString_list[1].upper()
     return Time(hours, mins, period)
 
+def get_maxCellWidth(d_t_l, option):
+    maxCellWidth = 0
+    if option == "day":
+        for day in d_t_l:
+            if maxCellWidth < len(day): 
+                maxCellWidth = len(day)
+    elif option == "time":
+        for time in d_t_l:
+            if maxCellWidth < len(time): 
+                maxCellWidth = len(time)
+    elif option == "L":
+        for row in d_t_l:
+            for item in row:
+                if maxCellWidth < len(item):
+                    maxCellWidth = len(item)
+    else:
+        print option
+        error("This option should not be a possibility")
+    return maxCellWidth
+
+def points_to_pixels(pt): # techically (pt*4/3) but was making things too big on the page
+    return round(pt * 3 / 3) 
+
+
 class Timesheet(object):
     def __init__(self, name, L, dayHeader, timeHeader):
         self.name = name
@@ -46,18 +70,24 @@ class Timesheet(object):
         
     def disp(self):
         # x is width, y is height
-        cellWidth = 100
-        cellHeight = 25
-        topMargin = 35
-        winWidth = cellWidth * (len(self.dayHeader) + 1)
-        winHeight = cellHeight * (len(self.timeHeader) + 1) + topMargin
-        
+        maxCellWidth_day = get_maxCellWidth(self.dayHeader, "day")
+        maxCellWidth_time = get_maxCellWidth(self.timeHeader, "time")
+        maxCellWidth_L = get_maxCellWidth(self.L, "L")
+        maxCellWidth_dL = max(maxCellWidth_day, maxCellWidth_L)
+
+        font_size = 9
+        cellWidth_dL = points_to_pixels(maxCellWidth_dL * font_size)
+        cellWidth_time = points_to_pixels(maxCellWidth_time * font_size)
+        cellHeight = 2 * font_size
+        topMargin = 3 * font_size
+        borderMargin = 20
+        winWidth = cellWidth_time + cellWidth_dL * len(self.dayHeader) + 2 * borderMargin
+        winHeight = cellHeight * len(self.timeHeader) + topMargin + 1.5 * borderMargin
         root = Tk()
         canvas = Canvas(root, width=winWidth, height=winHeight)
-        canvas.pack()
+        canvas.pack(expand=YES)
 
-        canvas.create_rectangle(0, 0, winWidth, topMargin)
-        canvas.create_text(winWidth/2, topMargin/2, text=self.name)
+        canvas.create_text(winWidth/2 + cellWidth_time/2, topMargin/2, text=self.name)
 
         tH, dH, L = [""], [""], [[]]
         for t in self.timeHeader: tH.append(t)
@@ -67,23 +97,32 @@ class Timesheet(object):
             for item in row: Lrow.append(item)
             L.append(Lrow)
 
+        maxCellLength = 0
         for row in xrange(len(tH)):
             for col in xrange(len(dH)):
                 if (row == 0) and (col == 0):
                     continue
-                elif row == 0: 
+                elif row == 0: # day header
                     cellFill = ""
                     cellText = dH[col]
-                elif col == 0: 
+                    x0 = cellWidth_time + (col - 1) * cellWidth_dL + borderMargin
+                    y0 = topMargin
+                    x1 = x0 + cellWidth_dL
+                    y1 = y0 + cellHeight
+                elif col == 0: # time header
                     cellFill = ""
                     cellText = tH[row]
-                else:
-                    cellFill = "green" if L[row][col] == "x" else ""
+                    x0 = borderMargin
+                    y0 = row * cellHeight + topMargin
+                    x1 = x0 + cellWidth_time
+                    y1 = y0 + cellHeight
+                else: # inside L
+                    cellFill = "red" if (len(L[row][col]) > 0) else "green"
                     cellText = L[row][col]
-                x0 = col * cellWidth
-                y0 = row * cellHeight + topMargin
-                x1 = x0 + cellWidth
-                y1 = y0 + cellHeight
+                    x0 = cellWidth_time + (col - 1) * cellWidth_dL + borderMargin
+                    y0 = cellHeight * row + topMargin
+                    x1 = x0 + cellWidth_dL
+                    y1 = y0 + cellHeight
                 canvas.create_rectangle(x0, y0, x1, y1, fill=cellFill)
                 canvas.create_text((x0 + x1)/2, (y0 + y1)/2, text=cellText) 
             
