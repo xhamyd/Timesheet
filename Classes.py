@@ -75,7 +75,7 @@ class Timesheet(object):
         maxCellWidth_L = get_maxCellWidth(self.L, "L")
         maxCellWidth_dL = max(maxCellWidth_day, maxCellWidth_L)
 
-        font_size = 9
+        font_size = 8
         cellWidth_dL = points_to_pixels(maxCellWidth_dL * font_size)
         cellWidth_time = points_to_pixels(maxCellWidth_time * font_size)
         cellHeight = 2 * font_size
@@ -84,9 +84,11 @@ class Timesheet(object):
         winWidth = cellWidth_time + cellWidth_dL * len(self.dayHeader) + 2 * borderMargin
         winHeight = cellHeight * len(self.timeHeader) + topMargin + 1.5 * borderMargin
         root = Tk()
+        root.wm_title("Timesheet")
         canvas = Canvas(root, width=winWidth, height=winHeight)
         canvas.pack(expand=YES)
 
+        # create title header
         canvas.create_text(winWidth/2 + cellWidth_time/2, topMargin/2, text=self.name)
 
         tH, dH, L = [""], [""], [[]]

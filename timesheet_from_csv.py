@@ -14,10 +14,11 @@ def timesheet_from_csv(TIMESHEET_FROM_CSV_FILE):
         if i == 0: 
             dayHeader = columns
             dayHeader.pop(0) #remove first entry
+            dayHeader = filter(None, dayHeader)
             continue
 
-        timeHead = columns.pop(0) #remove the time header
+        timeHead = columns.pop(0) #capture the time header
         timeHeader.append(timeHead)
-        L.append(columns)
-    
+        L.append(columns[:len(dayHeader)])
+
     return Timesheet(TIMESHEET_FROM_CSV_FILE.strip(".csv"), L, dayHeader, timeHeader)
