@@ -41,23 +41,23 @@ class Timesheet(object):
         self.startingTime, self.endingTime = self.calcEndpointTimes()
 
     def getIndices(self, day, time):
-        if (day in dayHeader and time in timeHeader):
+        if (day in self.dayHeader and time in self.timeHeader):
             return (self.dayHeader.index(day), self.timeHeader.index(time))
         else:
             print "The requested day or time does not exist in the headers"
             return False
             
     def checkAvail(self, day, time):
-        (dayIndex, timeIndex) = getIndices(self, day, time)
-        return self.L[dayIndex][timeIndex] != "x"
+        (dayIndex, timeIndex) = self.getIndices(day, time)
+        return self.L[timeIndex][dayIndex] != "x"
 
     def markBusy(self, day, time):
-        (dayIndex, timeIndex) = getIndices(self, day, time)
-        self.L[dayIndex][timeIndex] = "x"
+        (dayIndex, timeIndex) = self.getIndices(day, time)
+        self.L[timeIndex][dayIndex] = "x"
 
     def markFree(self, day, time):
-        (dayIndex, timeIndex) = getIndices(self, day, time)
-        self.L[dayIndex][timeIndex] = ""
+        (dayIndex, timeIndex) = self.getIndices(day, time)
+        self.L[timeIndex][dayIndex] = ""
         
     def calcTimeIncr(self):
         if len(self.timeHeader) > 1: 
