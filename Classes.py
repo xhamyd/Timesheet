@@ -134,6 +134,34 @@ class Timesheet(object):
             
         root.mainloop()
 
+    def write(self, printout_path):
+        free_mark = "o"
+        busy_mark = "."
+
+        f = open(printout_path + "/%s.txt" % self.name, "w+")
+        for i_time in xrange(len(self.timeHeader) + 1):
+            for i_day in xrange(len(self.dayHeader) + 1):
+                if (i_time == 0) and (i_day == 0):
+                    print >> f, "        ", " \t",
+                elif (i_day == 0):
+                    time = self.timeHeader[i_time - 1]
+                    if len(time) == len("h:mm XM"):
+                        print >> f, "", self.timeHeader[i_time - 1], " \t",
+                    else:
+                        print >> f, self.timeHeader[i_time - 1], " \t",
+                elif (i_time == 0):
+                    print >> f, self.dayHeader[i_day - 1][0], " \t",
+                else:
+                    item = self.L[i_time - 1][i_day - 1]
+                    if len(item) == 0:
+                        print >> f, free_mark, " \t",
+                    else:
+                        print >> f, busy_mark, " \t",
+            print >> f
+        f.close()
+        print "File written at %s" % printout_path
+            
+
 class Time(object):
     def __init__(self, hours, mins, period):
         self.hours = hours
