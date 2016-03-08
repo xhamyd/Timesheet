@@ -21,4 +21,7 @@ def timesheet_from_csv(TIMESHEET_FROM_CSV_FILE):
         timeHeader.append(timeHead)
         L.append(columns[:len(dayHeader)])
 
-    return Timesheet(TIMESHEET_FROM_CSV_FILE.strip(".csv"), L, dayHeader, timeHeader)
+    # eliminate parent folder, sheet name, and csv extension
+    ts_name = TIMESHEET_FROM_CSV_FILE[TIMESHEET_FROM_CSV_FILE.rfind("/") + 1: 
+                                      TIMESHEET_FROM_CSV_FILE.rfind("-") - 1]
+    return Timesheet(ts_name, L, dayHeader, timeHeader)
