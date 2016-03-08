@@ -37,7 +37,7 @@ class Timesheet(object):
         self.L = L
         self.dayHeader = dayHeader
         self.timeHeader = timeHeader
-        self.timeIncrement = self.calcTimeIncr()
+        self.timeIncrement = self.calcTimeIncr() # minute difference
         self.startingTime, self.endingTime = self.calcEndpointTimes()
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Timesheet(object):
             
     def checkAvail(self, day, time):
         (dayIndex, timeIndex) = self.getIndices(day, time)
-        return self.L[timeIndex][dayIndex] != "x"
+        return self.L[timeIndex][dayIndex] == ''
 
     def markBusy(self, day, time):
         (dayIndex, timeIndex) = self.getIndices(day, time)
@@ -64,7 +64,8 @@ class Timesheet(object):
         
     def calcTimeIncr(self):
         if len(self.timeHeader) > 1: 
-            return string_to_time(self.timeHeader[1]) - string_to_time(self.timeHeader[0])
+            second_time, first_time = string_to_time(self.timeHeader[1]), string_to_time(self.timeHeader[0])
+            return second_time.diff(first_time)
         else: 
             return False #there is no timeIncrement
             
@@ -140,25 +141,38 @@ class Time(object):
         self.period = period.upper()
         
     def __str__(self):
-        return "%02d:%02d %s" % (self.hours, self.mins, self.period)
+        return "%d:%02d %s" % (self.hours, self.mins, self.period)
 
     def __add__(self, other):
-        hours1, mins1 = self.convert_to_24hr()
-        hours2, mins2 = other.convert_to_24hr()
+        if type(other) is Time:
+            hours1, mins1 = self.convert_to_24hr()
+            hours2, mins2 = other.convert_to_24hr()
+            hoursX, minsX = hours1 + hours2, mins1 + mins2
 
-        hoursX, minsX = hours1 + hours2, mins1 + mins2
+        elif type(other) is int:
+            hours1, mins1 = self.convert_to_24hr()
+            mins2 = other
+            hoursX, minsX = hours1, mins1 + mins2
+
+        else:
+            print "Time cannot be added to %s objects" % str(type(other))
+
         while minsX >= 60: # minutes can only be from :00 to :59
             hoursX += 1
             minsX -= 60
         hoursX = hoursX % 24 # hours (in 24hr format) can only be from 0: to 23:
+            
         if hoursX > 12:
             hoursX -= 12
             periodX = "PM"
+        elif hoursX == 12:
+            periodX = "PM"
         elif hoursX == 0:
-            hoursX += 12
+            hoursX = 12
             periodX = "AM"
         else:
             periodX = "AM"
+
         return Time(hoursX, minsX, periodX)
 
     def __sub__(self, other):
@@ -173,13 +187,24 @@ class Time(object):
         if hoursX > 12:
             hoursX -= 12
             periodX = "PM"
+        elif hoursX == 12:
+            periodX = "PM"
         elif hoursX == 0:
-            hoursX += 12
+            hoursX = 12
             periodX = "AM"
         else:
             periodX = "AM"
         return Time(hoursX, minsX, periodX)
         
+    def diff(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
+
+        true_mins1 = hours1 * 60 + mins1
+        true_mins2 = hours2 * 60 + mins2
+
+        return abs(true_mins1 - true_mins2) # integer
+
     def __lt__(self, other):
         hours1, mins1 = self.convert_to_24hr()
         hours2, mins2 = other.convert_to_24hr()
@@ -236,9 +261,16 @@ class Time(object):
 
         return (hours1 != hours2) or (mins1 != mins2)
 
-    def convert_to_24hr(self): 
-        hours = self.hours + 12 if (self.period == "PM") else self.hours
-        hours = 0 if (self.period == "AM" and self.hours == 12) else hours
+    def convert_to_24hr(self):
+        if self.period == "AM":
+            if self.hours == 12: hours = 0
+            else: hours = self.hours
+        elif self.period == "PM":
+            if self.hours == 12: hours = 12
+            else: hours = self.hours + 12
+        else:
+            print "Period is not correctly defined: use only 'AM' or 'PM'"
+            return
         mins = self.mins
         
         return hours, mins
