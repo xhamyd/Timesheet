@@ -40,6 +40,9 @@ class Timesheet(object):
         self.timeIncrement = self.calcTimeIncr()
         self.startingTime, self.endingTime = self.calcEndpointTimes()
 
+    def __str__(self):
+        return "Timesheet (%s)" % self.name
+
     def getIndices(self, day, time):
         if (day in self.dayHeader and time in self.timeHeader):
             return (self.dayHeader.index(day), self.timeHeader.index(time))
@@ -136,9 +139,28 @@ class Time(object):
         self.mins = mins
         self.period = period.upper()
         
-    def __repr__(self):
+    def __str__(self):
         return "%02d:%02d %s" % (self.hours, self.mins, self.period)
-        
+
+    def __add__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
+
+        hoursX, minsX = hours1 + hours2, mins1 + mins2
+        while minsX >= 60: # minutes can only be from :00 to :59
+            hoursX += 1
+            minsX -= 60
+        hoursX = hoursX % 24 # hours (in 24hr format) can only be from 0: to 23:
+        if hoursX > 12:
+            hoursX -= 12
+            periodX = "PM"
+        elif hoursX == 0:
+            hoursX += 12
+            periodX = "AM"
+        else:
+            periodX = "AM"
+        return Time(hoursX, minsX, periodX)
+
     def __sub__(self, other):
         hours1, mins1 = self.convert_to_24hr()
         hours2, mins2 = other.convert_to_24hr()
@@ -163,22 +185,56 @@ class Time(object):
         hours2, mins2 = other.convert_to_24hr()
         
         if hours1 < hours2: 
-            return self
+            return True
         elif hours2 < hours1: 
-            return other
+            return False
         else: #hours1 == hours2
-            return self if mins1 < mins2 else other 
+            return True if mins1 < mins2 else False 
+
+    def __le__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
+        
+        if hours1 <= hours2: 
+            return True
+        elif hours2 <= hours1: 
+            return False
+        else: #hours1 == hours2
+            return True if mins1 <= mins2 else False 
 
     def __gt__(self, other):
         hours1, mins1 = self.convert_to_24hr()
         hours2, mins2 = other.convert_to_24hr()
         
         if hours1 > hours2: 
-            return self
+            return True
         elif hours2 > hours1: 
-            return other
+            return False
         else: #hours1 == hours2
-            return self if mins1 > mins2 else other 
+            return True if mins1 > mins2 else False 
+
+    def __ge__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = other.convert_to_24hr()
+        
+        if hours1 >= hours2: 
+            return True
+        elif hours2 >= hours1: 
+            return False
+        else: #hours1 == hours2
+            return True if mins1 >= mins2 else False 
+
+    def __eq__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = self.convert_to_24hr()
+
+        return (hours1 == hours2) and (mins1 == mins2)
+
+    def __ne__(self, other):
+        hours1, mins1 = self.convert_to_24hr()
+        hours2, mins2 = self.convert_to_24hr()
+
+        return (hours1 != hours2) or (mins1 != mins2)
 
     def convert_to_24hr(self): 
         hours = self.hours + 12 if (self.period == "PM") else self.hours
